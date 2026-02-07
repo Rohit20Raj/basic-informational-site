@@ -1,22 +1,31 @@
-import http from 'node:http';
-import fs from 'node:fs';
+const express = require("express");
+const path = require("path");
 
-const indexFile = fs.readFileSync('index.html');
-const aboutFile = fs.readFileSync('about.html');
-const contactMeFile = fs.readFileSync('contact-me.html');
-const notFoundFile = fs.readFileSync('404.html');
+const app = express();
 
-const server = http.createServer((req, res) => {
-    res.writeHead(200, { 'Content-Type': 'text/html' });
-    if(req.url === '/' || req.url === '/index') {
-        res.end(indexFile);
-    } else if (req.url === '/about') {
-        res.end(aboutFile);
-    } else if (req.url === '/contact-me') {
-        res.end(contactMeFile);
-    } else {
-        res.end(notFoundFile);
-    }
+const pagesPath = path.join(__dirname, "");
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(pagesPath, "index.html"));
 });
 
-server.listen(8080);
+app.get("/index", (req, res) => {
+  res.sendFile(path.join(pagesPath, "index.html"));
+});
+
+app.get("/about", (req, res) => {
+  res.sendFile(path.join(pagesPath, "about.html"));
+});
+
+app.get("/contact-me", (req, res) => {
+  res.sendFile(path.join(pagesPath, "contact-me.html"));
+});
+
+app.use((req, res) => {
+  res.status(404).sendFile(path.join(pagesPath, "404.html"));
+});
+
+const PORT = 8080;
+app.listen(PORT, () => {
+  console.log(`Express App running on port ${PORT}`);
+});
